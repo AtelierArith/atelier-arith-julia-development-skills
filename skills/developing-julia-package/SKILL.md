@@ -3,21 +3,27 @@ name: developing-julia-package
 description: Use when you write a Julia package
 ---
 
-# Creating a Julia package
+# Developing a Julia package
 
 Notes on developing Julia packages.
 
 Assume the package is named `MyPkg`. Substitute your actual package name wherever `MyPkg` appears.
 
-Put the core algorithms in `src/MyPkg.jl`.
+Use `src/MyPkg.jl` as the package entry point. Keep the module declaration, exports, and `include` list there; put substantial implementation in focused files under `src/`.
 
 ```julia
 module MyPkg
 
-# Write code here
+export fit_model, FitResult, GaussianModel
+
+include("models.jl")
+include("fit.jl")
+include("preprocess.jl")
 
 end
 ```
+
+Split files to improve readability, not to recreate Python-style class or submodule hierarchies. Prefer one public module unless there is a real user-facing namespace boundary.
 
 Guidelines below.
 
@@ -30,6 +36,23 @@ Guidelines below.
 
 using Test
 using MyPkg: <internal-only helper>
+```
+
+Test public behavior through the public API first. Import internals only when the helper has meaningful behavior that is hard to exercise through the public path:
+
+```julia
+using Test
+using MyPkg
+using MyPkg: initial_guess
+
+@testset "fit_model" begin
+    result = fit_model(x, y; model = GaussianModel())
+    @test result isa FitResult
+end
+
+@testset "initial_guess" begin
+    @test initial_guess(x, y, GaussianModel()) isa NamedTuple
+end
 ```
 
 ## Julia-idiomatic style
@@ -55,6 +78,38 @@ Instead, use multiple dispatch:
 f(x) = x # generic implementation
 f(x::Integer) = 2x # specialized implementation for x::Integer
 ```
+
+For package APIs, make the dispatch object explicit and keep symbol options as a thin compatibility layer if needed:
+
+```julia
+abstract type AbstractModel end
+
+struct GaussianModel <: AbstractModel
+    baseline::Bool
+end
+
+GaussianModel(; baseline = true) = GaussianModel(baseline)
+
+fit_model(x, y; model::AbstractModel = GaussianModel()) =
+    fit_model(model, x, y)
+
+function fit_model(model::GaussianModel, x, y)
+    guess = initial_guess(x, y, model)
+    # gaussian-specific implementation
+end
+```
+
+Use a marker or configuration struct for the model choice, and use a separate result struct for fitted values. Do not mutate a model type into a mixed "algorithm plus fitted state" object unless that is clearly the public contract.
+
+```julia
+struct FitResult{P,T}
+    params::P
+    residuals::Vector{T}
+    converged::Bool
+end
+```
+
+This keeps `GaussianModel()` as the method-selection/configuration value and `FitResult` as the returned fitted state.
 
 ### Type annotations
 
