@@ -7,15 +7,25 @@ description: Use when you run tests
 
 ## Running all tests with `Pkg.test()`
 
+Before running tests for a new package, make sure the test environment is already set up. If the package does not have tests yet, follow `creating-julia-test-env` first. Tests that use `using Test` must have `Test` available from the package or test project.
+
 To run all of your package's tests, use the following command:
 
 ```sh
-$ julia -e 'using Pkg; Pkg.test()'
+$ julia --project -e 'using Pkg; Pkg.test()'
 ```
 
 ## Running specific test sets only
 
-To run only particular test sets (for example, those defined as `@testset "label" begin ... end`), use the `~/.julia/bin/testrunner` tool. If you do not have the `testrunner` command, install it with:
+To run only particular test sets (for example, those defined as `@testset "label" begin ... end`), use the `~/.julia/bin/testrunner` tool.
+
+If `testrunner` is already installed, this command prints its path:
+
+```sh
+$ command -v testrunner
+```
+
+If you do not have the `testrunner` command, install it with:
 
 ```sh
 $ julia -e 'using Pkg; Pkg.activate(); Pkg.Apps.add(url="https://github.com/aviatesk/TestRunner.jl")'
