@@ -40,3 +40,20 @@ When writing or updating skills that involve Julia, follow the patterns already 
 - Fast iteration: `julia --project -e 'using WarmTestRunner; runtests()'` (daemon-backed, reuses a warm worker)
 - After `Pkg.build()` or any workspace-structure change, always `stop()` the WarmTestRunner daemon before re-running.
 - Targeted test sets: `testrunner --project=. test/runtests.jl L<start>:<end>` — use line ranges targeting only `@test` lines (not the `@testset` declaration line) to avoid the pattern-matching caveat.
+
+## Version Update Workflow
+
+When asked to bump the plugin version, update all plugin manifests together:
+
+- `.claude-plugin/plugin.json`: top-level `version`
+- `.claude-plugin/marketplace.json`: `metadata.version` and each plugin entry `version`
+- `.codex-plugin/plugin.json`: top-level `version`
+
+Use the same semantic version in every field, then verify with:
+
+```sh
+rg -n '"version"|"metadata"' .claude-plugin .codex-plugin
+git diff --check
+```
+
+If the bump is tied to a skill change, commit the version metadata, skill edit, and any generated test report together unless the user asks for separate commits.

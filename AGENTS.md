@@ -52,6 +52,23 @@ julia --project -e 'using Pkg; Pkg.test()'
 
 When changing a skill about test execution, include both the standard `Pkg.test()` path and any faster local workflow caveats.
 
+## Version Update Workflow
+
+When bumping the plugin version, update every plugin metadata file in the same change:
+
+- `.claude-plugin/plugin.json`
+- `.claude-plugin/marketplace.json`
+- `.codex-plugin/plugin.json`
+
+Keep all version fields synchronized to the same semantic version, for example `0.1.1`. Verify the update with:
+
+```sh
+rg -n '"version"|"metadata"' .claude-plugin .codex-plugin
+git diff --check
+```
+
+If the version bump accompanies skill documentation changes, include both the metadata updates and the related skill/report changes in the same commit.
+
 ## Commit & Pull Request Guidelines
 
 The current history uses short, plain commit messages such as `Init` and `first commit`. Continue with concise imperative summaries, for example `Add Julia app skill notes`.
