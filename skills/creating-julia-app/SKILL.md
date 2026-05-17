@@ -1,5 +1,5 @@
 ---
-name: creating-julia-test-env
+name: creating-julia-app
 description: Use when you create a CLI written in Julia packages or MCP servers
 ---
 

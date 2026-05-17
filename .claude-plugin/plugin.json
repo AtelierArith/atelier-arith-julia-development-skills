@@ -1,0 +1,11 @@
+{
+  "name": "julia-dev-skills",
+  "description": "Julia development workflow skills for Claude Code",
+  "version": "0.1.0",
+  "author": {
+    "name": "SatoshiTerasaki",
+    "email": "atelierarith@gmail.com"
+  },
+  "repository": "https://github.com/atelierarith/atelier-arith-julia-development-skills",
+  "license": "MIT"
+}
