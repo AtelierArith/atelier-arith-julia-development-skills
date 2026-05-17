@@ -29,7 +29,20 @@ claude --plugin-url https://github.com/atelierarith/atelier-arith-julia-developm
 
 ### Codex
 
-Add this repository URL in the Codex plugin settings. The manifest is at `.codex-plugin/plugin.json`.
+If your Codex client supports plugins, add this repository URL in the Codex
+plugin settings. The manifest is at `.codex-plugin/plugin.json`.
+
+Manual install:
+
+```sh
+git clone https://github.com/AtelierArith/atelier-arith-julia-development-skills.git ~/.codex/atelier-arith-julia-development-skills
+mkdir -p ~/.agents/skills
+for skill in ~/.codex/atelier-arith-julia-development-skills/skills/*/; do
+  ln -sfn "$skill" ~/.agents/skills/"$(basename "$skill")"
+done
+```
+
+Restart Codex after installation so it reloads the skill list.
 
 ## Repository Structure
 
