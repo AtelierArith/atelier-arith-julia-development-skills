@@ -16,7 +16,7 @@ Plugin containing Julia development skills for both **Claude Code** and **Codex*
 
 ```sh
 /plugin marketplace add atelierarith/atelier-arith-julia-development-skills
-/plugin install julia-dev-skills@atelier-arith-julia-development-skills
+/plugin install aa-jl@atelier-arith-julia-development-skills
 ```
 
 Session-only (no permanent install):

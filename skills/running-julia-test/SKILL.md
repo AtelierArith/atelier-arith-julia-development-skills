@@ -87,19 +87,35 @@ $ cd path/to/target/package
 $ julia --project -e 'using WarmTestRunner; runtests()'
 ```
 
-At this time, a daemon process runs in the background. To manually stop the daemon, run the following:
+To run testsets in parallel, start the WarmTestRunner daemon with multiple jobs in one terminal, then run tests with `split_testsets = true` from another terminal:
+
+```sh
+# Terminal 1
+$ cd path/to/target/package
+$ julia --project -e 'using WarmTestRunner; serve(jobs=4)'
+
+# Terminal 2
+$ cd path/to/target/package
+$ julia --project -e 'using WarmTestRunner; runtests(split_testsets = true)'
+```
+
+This splits testsets and executes them across the warm worker pool.
+
+When `runtests()` starts the daemon automatically, a daemon process runs in the background. To manually stop any WarmTestRunner daemon, run the following:
 
 ```sh
 $ cd path/to/target/package
 $ julia --project -e 'using WarmTestRunner; stop()'
 ```
 
-If you run `Pkg.build()` for the target package, you must stop the daemon (`stop()`) and rerun `runtests()` afterwards:
+If you run `Pkg.build()` for the target package, stop the daemon (`stop()`) first and rerun `runtests()` afterwards.
+
+This is especially important when developing a Julia package with a C interface. In that workflow, `Pkg.build()` is often used to rebuild or replace a shared library, and WarmTestRunner workers may still have the old shared library loaded. Stop the daemon before rebuilding so the next test run starts from fresh workers:
 
 ```sh
 $ cd path/to/target/package
-$ julia --project -e 'using Pkg; Pkg.build()'
 $ julia --project -e 'using WarmTestRunner; stop()'
+$ julia --project -e 'using Pkg; Pkg.build()'
 $ julia --project -e 'using WarmTestRunner; runtests()'
 # update files in ./src or ./test/
 $ julia --project -e 'using WarmTestRunner; runtests()'
