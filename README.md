@@ -32,17 +32,44 @@ claude --plugin-url https://github.com/atelierarith/atelier-arith-julia-developm
 If your Codex client supports plugins, add this repository URL in the Codex
 plugin settings. The manifest is at `.codex-plugin/plugin.json`.
 
-Manual install:
+For local development, add this repository as a local Codex plugin marketplace
+entry. The Codex plugin name is `aa-jl`; it is intentionally short so namespaced
+skill IDs such as `aa-jl:finding-latest-julia-version` stay under Codex's
+64-character skill name limit.
 
 ```sh
-git clone https://github.com/AtelierArith/atelier-arith-julia-development-skills.git ~/.codex/atelier-arith-julia-development-skills
-mkdir -p ~/.agents/skills
-for skill in ~/.codex/atelier-arith-julia-development-skills/skills/*/; do
-  ln -sfn "$skill" ~/.agents/skills/"$(basename "$skill")"
-done
+git clone https://github.com/AtelierArith/atelier-arith-julia-development-skills.git ~/.codex/aa-jl
+mkdir -p ~/.agents/plugins
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+marketplace = Path.home() / ".agents" / "plugins" / "marketplace.json"
+plugin_path = Path.home() / ".codex" / "aa-jl"
+entry = {
+    "name": "aa-jl",
+    "source": {"source": "local", "path": str(plugin_path)},
+    "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+    "category": "Developer Tools",
+}
+
+if marketplace.exists():
+    data = json.loads(marketplace.read_text())
+else:
+    data = {
+        "name": "local-codex-plugins",
+        "interface": {"displayName": "Local Codex Plugins"},
+        "plugins": [],
+    }
+
+data["plugins"] = [p for p in data.get("plugins", []) if p.get("name") != "aa-jl"]
+data["plugins"].append(entry)
+marketplace.write_text(json.dumps(data, indent=2) + "\n")
+PY
 ```
 
-Restart Codex after installation so it reloads the skill list.
+Then install `aa-jl` from the local Codex plugin marketplace and restart Codex
+so it reloads the skill list.
 
 ## Repository Structure
 

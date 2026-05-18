@@ -1,7 +1,7 @@
 {
   "name": "julia-dev-skills",
   "description": "Julia development workflow skills for Claude Code",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": {
     "name": "SatoshiTerasaki",
     "email": "atelierarith@gmail.com"
