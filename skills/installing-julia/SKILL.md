@@ -42,12 +42,15 @@ binary the installer would fetch, but as a plain file you extract locally
    | macOS x86_64 (Intel)   | `mac/x64`       | `mac-x86_64.tar.gz`    |
    | macOS aarch64 (Apple)  | `mac/aarch64`   | `macaarch64.tar.gz`    |
 
-3. Look up the current latest patch at <https://julialang.org/downloads/>, then download
-   and extract:
+3. Resolve the latest stable patch (see [[finding-latest-julia-version]] for
+   the full set of methods — do not hard-code `VERSION=` from memory), then
+   download and extract:
 
    ```sh
-   VERSION=1.12.6                  # ← replace with latest from julialang.org/downloads
-   MINOR=${VERSION%.*}             # → 1.12
+   VERSION=$(curl -fsSL https://julialang-s3.julialang.org/bin/versions.json \
+     | jq -r 'to_entries | map(select(.value.stable)) | map(.key)
+              | sort_by(split(".") | map(tonumber? // 0)) | last')
+   MINOR=${VERSION%.*}             # → e.g. 1.12
    ARCH_PATH=linux/aarch64         # ← from table above
    ARCH_SUFFIX=linux-aarch64       # ← from table above
 
