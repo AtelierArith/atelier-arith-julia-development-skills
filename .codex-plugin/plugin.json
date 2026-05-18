@@ -1,6 +1,6 @@
 {
   "name": "atelier-arith-julia-development-skills",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Codex skills for Julia installation, package creation, app creation, and test workflows.",
   "author": {
     "name": "Atelier Arith",

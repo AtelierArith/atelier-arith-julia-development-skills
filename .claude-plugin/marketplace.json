@@ -1,12 +1,12 @@
 {
   "name": "atelier-arith-julia-development-skills",
   "owner": { "name": "SatoshiTerasaki" },
-  "metadata": { "version": "0.1.2" },
+  "metadata": { "version": "0.1.3" },
   "plugins": [
     {
       "name": "julia-dev-skills",
       "description": "Julia development workflow skills for Claude Code",
-      "version": "0.1.2",
+      "version": "0.1.3",
       "source": "./"
     }
   ]
