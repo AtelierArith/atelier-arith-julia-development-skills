@@ -129,6 +129,52 @@ Notes:
   unique across all discoverable locations.
 - Restart OpenCode after installing so it reloads the skill list.
 
+## Updating
+
+New versions are published by bumping the plugin `version` in the manifests. How
+you receive them depends on how you installed.
+
+### Claude Code
+
+Auto-update is **off by default** for third-party marketplaces like this one.
+Turn it on in `/plugin` → **Marketplaces** → select this marketplace →
+**Enable auto-update**, or update on demand:
+
+```sh
+claude plugin update aa-jl@atelier-arith-julia-development-skills
+```
+
+Refresh the marketplace's catalog separately with:
+
+```sh
+claude plugin marketplace update atelier-arith-julia-development-skills
+```
+
+Run `/reload-plugins`, or start a new session, to load the update.
+
+### Codex and OpenCode
+
+These installs are plain files, so pull the repository and re-place them.
+
+For a copied install, re-copy after pulling:
+
+```sh
+git -C ~/.local/share/aa-jl pull
+cp -R ~/.local/share/aa-jl/skills/. ~/.agents/skills/   # shared Codex + OpenCode location
+# for an OpenCode-only install instead:
+cp -R ~/.local/share/aa-jl/skills/. ~/.config/opencode/skills/
+```
+
+For a symlinked install, the links follow the clone, so a pull is enough:
+
+```sh
+git -C ~/.local/share/aa-jl pull
+```
+
+Restart Codex / OpenCode so they reload the skill list. If you vendored the
+skills into a project (`.agents/skills` or `.opencode/skills`), pull and re-copy
+there, then commit the change.
+
 ## Repository Structure
 
 ```
