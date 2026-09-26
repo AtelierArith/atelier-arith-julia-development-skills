@@ -70,9 +70,27 @@ To create `Project.toml` and `src/MyPkg.jl` directly in the current working dire
    $ julia --project=. -e 'using MyPkg; println(MyPkg.greet())'
    ```
 
-### Subdirectory layout (opt-in only)
+To add tests next, follow [[testing-julia-package]].
 
-Only use this when the user explicitly asks for it. To create a package named `MyPkg` under a new subdirectory, run:
+### Generate a complete package template (subdirectory layout only)
+
+The Pkg documentation recommends [PkgTemplates.jl](https://juliaci.github.io/PkgTemplates.jl/stable/)
+for repeatable package scaffolding, including optional docs and CI files. Use it
+when the user asks for a complete new package scaffold in a subdirectory; its
+normal generation workflow creates a package directory:
+
+```julia
+using Pkg
+Pkg.activate(; temp = true)
+Pkg.add("PkgTemplates")
+using PkgTemplates
+
+template = Template(dir = pwd())
+template("MyPkg")
+```
+
+For a minimal scaffold without template plugins, use `Pkg.generate` only when
+the user explicitly requests the subdirectory layout:
 
 ```sh
 $ julia -e 'using Pkg; Pkg.generate("MyPkg")'
@@ -110,8 +128,8 @@ Registration in the General registry is not automatic; get these in order first.
   Aqua.test_all(MyPkg)
   ```
 
-  Add Aqua to the test environment (see [[creating-julia-test-env]] for the test-environment setup) and pin a version, for example `[compat] Aqua = "0.8"`. Do **not** add Aqua to the package's own `[deps]` — it is a test-only dependency.
+  Add Aqua to the test project (see [[testing-julia-package]]) and declare it there, not in the package's runtime `[deps]`.
 
-- **Run the full test suite**, e.g. `julia --project -e 'using Pkg; Pkg.test()'`; see [[running-julia-test]] for targeted and parallel runs.
+- **Run the full test suite**, e.g. `julia --project -e 'using Pkg; Pkg.test()'`; see [[testing-julia-package]] for setup and optional faster workflows.
 
 - **Register** through [Registrator.jl](https://github.com/JuliaRegistries/Registrator.jl) — the `@JuliaRegistrator register` comment on a commit or pull request, or the Registrator app. This opens a PR against [General](https://github.com/JuliaRegistries/General); register only once the version, `[compat]` bounds, and tests are green.

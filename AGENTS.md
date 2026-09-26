@@ -8,12 +8,15 @@ This repository contains skill documentation for Claude Code, Codex, and OpenCod
 - `skills/installing-julia/SKILL.md`
 - `skills/generating-julia-package/SKILL.md`
 - `skills/developing-julia-package/SKILL.md`
+- `skills/documenting-julia-package/SKILL.md`
+- `skills/fixing-julia-exports/SKILL.md`
 - `skills/precompiling-julia-package/SKILL.md`
 - `skills/profiling-julia-performance/SKILL.md`
 - `skills/creating-julia-app/SKILL.md`
-- `skills/creating-julia-test-env/SKILL.md`
+- `skills/testing-julia-package/SKILL.md`
+- `skills/using-juliacheck/SKILL.md`
+- `skills/auditing-julia-package-practices/SKILL.md`
 - `skills/debugging-julia/SKILL.md`
-- `skills/running-julia-test/SKILL.md`
 
 Keep skill directories lowercase and hyphen-separated. Add supporting files only when a skill genuinely needs reusable assets, scripts, or references.
 
@@ -72,15 +75,15 @@ When writing or updating skills that involve Julia, follow the patterns already 
 - Do NOT use `Pkg.generate()` for the in-place layout; hand-write the files.
 - Generate a UUID with: `julia -E 'using UUIDs; string(uuid4())'`
 
-**Test environment**
-- Use the `[workspace]` section in the root `Project.toml` (Julia 1.12+). On Julia 1.11 and older, either keep `test/Project.toml` without `[workspace]` (supported since Julia 1.2), or use the legacy `[extras]` + `[targets]` in the root `Project.toml` **instead of** `test/Project.toml`.
-- The `test/Project.toml` must `Pkg.develop(path="../")` to reference the parent package.
+**Test environment (Julia 1.13 baseline)**
+- Use `[workspace]` in the root `Project.toml` and declare test-only dependencies in `test/Project.toml`.
+- Each workspace project declares every package it imports; dependencies from the root project are not inherited.
+- Keep the full test command `julia --project -e 'using Pkg; Pkg.test()'`; direct test-file execution is for local iteration.
 
 **Running tests**
-- If the package has no test environment yet, follow `creating-julia-test-env` first.
-- Full suite: `julia -e 'using Pkg; Pkg.test()'` (use for CI / pre-merge)
-- Targeted test sets: `testrunner --project=. test/runtests.jl L<start>:<end>` — use line ranges targeting only `@test` lines (not the `@testset` declaration line) to avoid the pattern-matching caveat.
-- Parallel files: `julia -e 'using Pkg; Pkg.test(; test_args=["--jobs=4"])'` (ParallelTestRunner.jl; requires autodiscovery in `test/runtests.jl` and no `include` calls).
+- If the package has no test environment yet, follow `testing-julia-package` first.
+- Full suite: `julia --project -e 'using Pkg; Pkg.test()'` (use for CI / pre-merge)
+- Parallel files: `julia --project -e 'using Pkg; Pkg.test(; test_args=["--jobs=4"])'` (optional ParallelTestRunner.jl; requires autodiscovery in `test/runtests.jl` and no manual `include` calls).
 
 ## Testing Guidelines
 

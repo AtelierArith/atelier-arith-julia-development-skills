@@ -8,14 +8,15 @@ Plugin containing Julia development skills for **Claude Code**, **Codex**, and *
 - `installing-julia` — point the user to the official Julia installation instructions (does not run install scripts)
 - `generating-julia-package` — create Julia project environments and package layouts
 - `developing-julia-package` — write Julia packages idiomatically
+- `auditing-julia-package-practices` — review a package against these practices and suggest prioritized fixes
 - `documenting-julia-package` — build and publish package docs with Documenter.jl (makedocs, doctests, GitHub Pages)
 - `fixing-julia-exports` — remove internal-only exports and trim a package's public API
-- `precompiling-julia-package` — reduce compile latency (TTFX ≥ 3 s, TTFL ≥ 1 s) with PrecompileTools.jl
+- `precompiling-julia-package` — measure and reduce compile latency with PrecompileTools.jl
 - `profiling-julia-performance` — diagnose runtime slowness, type instability, and allocations with Profile, JET.jl, and AllocCheck.jl
 - `debugging-julia` — find the cause of exceptions and wrong results non-interactively (stack traces, @code_typed, JET)
 - `creating-julia-app` — create Julia command-line apps with `@main` and `[apps]`
-- `creating-julia-test-env` — add a Julia package test environment
-- `running-julia-test` — run standard, targeted, and parallel (ParallelTestRunner.jl) Julia test workflows
+- `testing-julia-package` — set up a workspace test project and run package tests
+- `using-juliacheck` — run JuliaCheck.jl rule-based static checks on Julia source files
 
 ## Installation
 
@@ -190,9 +191,9 @@ there, then commit the change.
 ├── LICENSE
 ├── README.md
 └── skills/
-    ├── creating-julia-app/
+    ├── auditing-julia-package-practices/
     │   └── SKILL.md
-    ├── creating-julia-test-env/
+    ├── creating-julia-app/
     │   └── SKILL.md
     ├── debugging-julia/
     │   └── SKILL.md
@@ -212,7 +213,9 @@ there, then commit the change.
     │   └── SKILL.md
     ├── profiling-julia-performance/
     │   └── SKILL.md
-    └── running-julia-test/
+    ├── testing-julia-package/
+    │   └── SKILL.md
+    └── using-juliacheck/
         └── SKILL.md
 ```
 

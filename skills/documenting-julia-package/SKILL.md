@@ -33,36 +33,35 @@ simple enough for the default layout.
 
 ## Step 2: Set up the doc build environment
 
-**Julia 1.12+ (recommended):** add `docs` to the package's `[workspace]` so the
-doc environment resolves together with the package:
+**Julia 1.13 development baseline:** add `docs` to the package's `[workspace]`
+so the documentation environment resolves together with the package. Include
+other development projects such as `test` and `benchmark` in the same list when
+they exist:
 
 ```toml
 [workspace]
-projects = ["docs"]
+projects = ["docs"] # Include "test" or "benchmark" too when those projects exist.
 ```
 
-Then, from the repository root:
-
-```sh
-$ julia --project=docs -e 'using Pkg; Pkg.add(["Documenter", "MyPkg"])'
-```
-
-**Julia 1.11 and older:** create the doc environment directly and add the
-package as a dev dependency so Documenter documents the local checkout:
-
-```sh
-$ julia --project=docs -e 'using Pkg; Pkg.add("Documenter"); Pkg.develop(path=".")'
-```
-
-Either way, pin Documenter's version in `docs/Project.toml` so a new major
-release cannot silently change the build:
+Declare Documenter and the local package in `docs/Project.toml`. Workspace
+projects do not inherit the root package's dependencies:
 
 ```toml
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+MyPkg = "<UUID from the root Project.toml>"
+
+[sources]
+MyPkg = {path = ".."}
 
 [compat]
 Documenter = "1"
+```
+
+Resolve the doc environment from the repository root:
+
+```sh
+julia --project=docs -e 'using Pkg; Pkg.instantiate(; workspace=true)'
 ```
 
 Do **not** add Documenter to the package's own `[deps]` — it is a doc-build
@@ -163,7 +162,7 @@ julia> 1 + 1
   `makedocs(; doctest = :fix)`), then review the diff before committing.
 
 To run doctests as part of the normal test suite, add Documenter to the test
-environment (see [[creating-julia-test-env]]) and call `doctest` in
+project (see [[testing-julia-package]]) and call `doctest` in
 `test/runtests.jl`; it behaves like a `@testset`:
 
 ```julia
@@ -174,7 +173,7 @@ using Test, Documenter, MyPkg
 end
 ```
 
-Run it with the other tests (see [[running-julia-test]]).
+Run it with the other tests (see [[testing-julia-package]]).
 
 ## Step 7: Deploy to GitHub Pages
 
@@ -207,8 +206,7 @@ jobs:
         shell: julia --color=yes --project=docs {0}
         run: |
           using Pkg
-          Pkg.develop(PackageSpec(path=pwd()))
-          Pkg.instantiate()
+          Pkg.instantiate(; workspace=true)
       - name: Build and deploy
         run: julia --color=yes --project=docs docs/make.jl
         env:

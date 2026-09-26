@@ -1,7 +1,7 @@
 {
   "name": "aa-jl",
-  "version": "0.4.0",
-  "description": "Codex skills for Julia package development: installation, package generation, precompilation, profiling, debugging, documentation, apps, and testing.",
+  "version": "0.5.0",
+  "description": "Codex skills for Julia package development: package audits, JuliaCheck, testing, package generation, precompilation, profiling, debugging, documentation, and apps.",
   "author": {
     "name": "Atelier Arith",
     "url": "https://github.com/AtelierArith"
@@ -14,15 +14,16 @@
   "interface": {
     "displayName": "Atelier Arith Julia Development Skills",
     "shortDescription": "Julia development workflows for Codex.",
-    "longDescription": "A collection of Codex skills covering the Julia package workflow: installing Julia, generating and developing packages, reducing compile latency with PrecompileTools.jl, profiling and debugging, building documentation with Documenter.jl, trimming excessive exports, creating apps, and setting up and running tests.",
+    "longDescription": "A collection of Codex skills covering the Julia package workflow: installing Julia, generating and developing packages, auditing best practices, running JuliaCheck static analysis, reducing compile latency with PrecompileTools.jl, profiling and debugging, building documentation with Documenter.jl, trimming excessive exports, creating apps, and setting up and running tests.",
     "developerName": "Atelier Arith",
     "category": "Developer Tools",
     "capabilities": ["Write"],
     "websiteURL": "https://github.com/AtelierArith/atelier-arith-julia-development-skills",
     "defaultPrompt": [
       "Create a Julia package in this directory.",
-      "Add a Julia test environment.",
-      "Run the Julia test workflow."
+      "Audit a Julia package against its development practices.",
+      "Run JuliaCheck on this package's source files.",
+      "Set up a Julia test environment and run the test workflow."
     ],
     "brandColor": "#9558B2"
   }

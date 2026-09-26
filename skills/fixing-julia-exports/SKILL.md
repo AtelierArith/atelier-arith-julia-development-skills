@@ -20,20 +20,21 @@ See [[developing-julia-package]] for the general style rule ("Avoid excessive
 
 ## Step 1: Inventory what the package exports
 
-List the names `using MyPkg` would bring into scope, and find the `export`
-statements that produce them:
+On Julia 1.11 and later, `names(MyPkg)` lists public names marked with either
+`public` or `export`; it is not an export-only inventory. Use
+`Base.isexported` when you need to distinguish names imported by `using`:
 
 ```sh
-$ julia --project -e 'using MyPkg; println(sort(names(MyPkg)))'
+$ julia --project -e 'using MyPkg; println(sort(filter(n -> Base.isexported(MyPkg, n), names(MyPkg; all=true))))'
 ```
 
 ```sh
 $ rg -n '^\s*export\b' src/
 ```
 
-`names(MyPkg)` lists the exported names; `names(MyPkg; all=true)` also shows
-non-exported internals for comparison. A single `export` line can list many
-names, so read the statements rather than grepping for one name.
+`names(MyPkg; all=true)` includes all bindings for comparison. A single
+`export` line can list many names, so read the statements rather than grepping
+for one name.
 
 ## Step 2: Classify each exported name as public or internal
 
@@ -56,8 +57,10 @@ truth: a name that is documented is public even if nothing in `src/` calls it.
 
 ## Step 3: Remove the export and import the internal in tests
 
-Delete the name from the `export` list in `src/MyPkg.jl` — the function itself
-stays exactly where it is. Then update the test suite to reach it explicitly.
+Before editing, tell the user which files you are about to change (especially
+when modifying an existing package). Then delete the name from the `export`
+list in `src/MyPkg.jl` — the function itself stays exactly where it is — and
+update the test suite to reach it explicitly.
 
 Before (documented only by an accidental export):
 
@@ -136,12 +139,20 @@ Run the full test suite; the explicit imports should keep every test passing:
 $ julia --project -e 'using Pkg; Pkg.test()'
 ```
 
-See [[running-julia-test]] for targeted and parallel runs while iterating.
+See [[testing-julia-package]] for test setup and optional focused or parallel
+runs while iterating.
+
 Confirm the exported surface shrank:
 
 ```sh
-$ julia --project -e 'using MyPkg; println(sort(names(MyPkg)))'
+$ julia --project -e 'using MyPkg; println(sort(filter(n -> Base.isexported(MyPkg, n), names(MyPkg; all=true))))'
 ```
+
+A successful cleanup looks like:
+
+- `Pkg.test()` still passes.
+- The export list no longer contains the internal name.
+- Tests that need the internal name import it with `using MyPkg: name`.
 
 If the package runs quality checks, let [Aqua.jl](https://github.com/JuliaTesting/Aqua.jl)
 catch exported-but-undefined names and other API mistakes (see
@@ -151,6 +162,10 @@ catch exported-but-undefined names and other API mistakes (see
 using Aqua
 Aqua.test_all(MyPkg)   # includes undefined_exports and unbound_args checks
 ```
+
+If you are preparing the package for registration, continue with the
+pre-registration checklist in [[generating-julia-package]] (compat bounds,
+version, full test suite).
 
 ## What counts as a breaking change
 

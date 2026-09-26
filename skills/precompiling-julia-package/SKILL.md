@@ -1,6 +1,6 @@
 ---
 name: precompiling-julia-package
-description: Use when a Julia package takes 1 second or more to load (TTFL) or a function takes 3 seconds or more on its first call (TTFX) because of JIT compilation, or when the user mentions precompilation, time-to-first-execution, time-to-first-load, slow package load, slow first call, startup latency, or PrecompileTools.jl. Add a PrecompileTools.jl workload before reaching for micro-optimizations.
+description: Use when measured Julia package load or first-call latency is a problem, or when the user mentions precompilation, time-to-first-execution, time-to-first-load, slow package load, slow first call, startup latency, or PrecompileTools.jl. Measure on Julia 1.13 before adding a PrecompileTools.jl workload.
 ---
 
 # Reducing Julia TTFX and TTFL with PrecompileTools.jl
@@ -12,15 +12,19 @@ declare a small, representative workload that Julia runs during precompilation
 and caches, so that work is paid once when the package is installed or updated
 instead of every time a fresh process starts.
 
-Use this skill when either threshold is exceeded:
+Treat latency thresholds as prompts to measure, not pass/fail rules. Julia 1.13
+reduces package precompile time substantially compared with Julia 1.12, so
+measure on the Julia version and hardware that matter to users. See the [Julia
+1.13 release highlights](https://julialang.org/blog/2026/09/julia-1.13-highlights/).
+
+Useful initial signals are:
 
 - **TTFL ≥ 1 s** — `using MyPkg` is slow.
 - **TTFX ≥ 3 s** — the first call to a function is slow.
 
-Treat these as starting signals, not hard rules. A 0.5 s first call in a REPL
-loop is still worth fixing even if it is under the threshold; conversely, a
-one-shot batch script that runs for hours does not need precompilation of its
-own code.
+A repeated first call in a latency-sensitive REPL or service can justify work
+below those thresholds. A one-shot batch script that runs for hours may not
+benefit from precompiling its own code.
 
 ## Step 1: Measure before changing anything
 
@@ -159,8 +163,8 @@ Re-run the Step 1 measurements with a fresh cache:
 julia --project -e 'using Pkg; Pkg.precompile()'
 ```
 
-Then confirm TTFL dropped below 1 s and the targeted TTFX calls dropped below
-3 s. Report the before/after numbers. If nothing improved, check that the
+Report the before/after numbers and whether they meet the package's real latency
+goal; do not treat the initial signals above as universal limits. If nothing improved, check that the
 workload actually ran (a swallowed error in `@setup_workload` will leave you
 with a no-op) and that the types you exercised match the types callers use.
 

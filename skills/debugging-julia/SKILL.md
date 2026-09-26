@@ -5,15 +5,10 @@ description: Use when Julia code errors, throws an exception, produces wrong res
 
 # Debugging Julia code from the CLI
 
-Coding agents run commands, not terminals: there is no TTY to drive an
-interactive debugger. Everything here is non-interactive — it produces output on
-stdout/stderr and an exit code, so an agent can read it, reason, and iterate.
-
-Do **not** use `Debugger.jl` (`@enter` / the `debug>` REPL), `Infiltrator.jl`
-(`@infiltrate` / the `infil>` REPL), or `Cthulhu.jl` (the `@descend` arrow-key
-menu). They block on raw keyboard input and full-screen redraws, so they hang or
-fail without a human. The information Cthulhu shows is still available
-non-interactively through `@code_typed` etc. (see Step 3); use these instead.
+Start with reproducible command-line steps that work in a non-interactive
+session. If an interactive Julia terminal is available and the failure benefits
+from stepping through code, an interactive debugger can complement these
+steps; do not assume one is available to the agent.
 
 ## Step 1: Reproduce deterministically
 
@@ -121,7 +116,7 @@ assertions in committed code unless they are genuine invariants.
   commit finds the introducing change. Each step checks out and runs historical
   code, so only bisect commits you trust.
 - Confirm the fix by re-running the exact minimal reproduction, and add a
-  regression test (see [[creating-julia-test-env]]).
+  regression test (see [[testing-julia-package]]).
 
 ## Pitfalls
 
