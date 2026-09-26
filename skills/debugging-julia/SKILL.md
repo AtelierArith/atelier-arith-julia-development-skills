@@ -53,6 +53,11 @@ When frames you expect are missing, they were likely inlined: rerun with
 its frame visible. Read the trace top-down, but the bug is usually at the first
 frame that belongs to **your** code, not in the deepest Base/stdlib frame.
 
+When explaining the trace to a user, summarize the error and the first relevant
+frame instead of dumping the full trace. If the user is coming from Python,
+note that Julia puts the exception at the top and the first user frame is the
+best place to look, whereas Python tracebacks put the error at the bottom.
+
 ## Step 3: Locate the failing method / inspect inference
 
 `InteractiveUtils` ships with Julia, so these need no dependency:
@@ -117,6 +122,8 @@ assertions in committed code unless they are genuine invariants.
   code, so only bisect commits you trust.
 - Confirm the fix by re-running the exact minimal reproduction, and add a
   regression test (see [[testing-julia-package]]).
+- When presenting the fix, show a small before/after snippet so the user can see
+  the change at a glance.
 
 ## Pitfalls
 

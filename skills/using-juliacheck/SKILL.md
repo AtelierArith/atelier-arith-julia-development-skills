@@ -9,6 +9,11 @@ JuliaCheck.jl is a rule-based static code checker for Julia source. It parses
 files with JuliaSyntax.jl and reports style or structural rule violations. It
 complements tests: it does not execute the program or prove correctness.
 
+The first step below downloads JuliaCheck.jl from GitHub. If you are an agent
+working in an environment that cannot run networked commands, state that
+limitation immediately and provide the clone/run commands or reusable workflow
+files for the user to execute themselves rather than attempting the clone.
+
 ## Obtain a pinned checkout
 
 JuliaCheck.jl is distributed from its GitHub repository. Check the repository's
@@ -16,8 +21,17 @@ releases and select a tagged version compatible with the Julia version in use.
 Pin a release tag or commit for repeatable runs; do not rely on a moving branch
 in CI.
 
+The user should run this clone step; it reaches out to GitHub and downloads
+third-party code:
+
 ```sh
 git clone --branch <release-tag> --depth 1 https://github.com/tiobe/JuliaCheck.jl.git "/tmp/JuliaCheck.jl"
+julia --project="/tmp/JuliaCheck.jl" -e 'using Pkg; Pkg.instantiate()'
+```
+
+If the checkout already exists locally, just instantiate it:
+
+```sh
 julia --project="/tmp/JuliaCheck.jl" -e 'using Pkg; Pkg.instantiate()'
 ```
 
@@ -63,3 +77,8 @@ development or CI tool environment, not the package's runtime dependencies.
 
 For Julia 1.13 language and parser changes, update the pinned checker release
 and review its output before making the checker mandatory in CI.
+
+When generating a shell script or CI workflow for JuliaCheck, replace any
+`<release-tag>` placeholder with the current release, tell the user whether
+you have validated the script syntax, and remind them to test it locally
+before committing.

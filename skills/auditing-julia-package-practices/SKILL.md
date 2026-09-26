@@ -82,12 +82,17 @@ the detailed standard; avoid reporting the same issue under multiple headings.
 
 For each finding, include:
 
-1. **Priority** — high, medium, or low, based on user impact and release risk.
-2. **Evidence** — file and line(s), command output, or a concise explanation of
+1. **Category** — one of:
+   - `REGISTRY BLOCKER` — prevents registration or breaks CI/users.
+   - `USER-FACING BUG` — affects runtime behavior or correctness.
+   - `RECOMMENDED BEFORE ANNOUNCEMENT` — worth fixing before public release.
+   - `POLISH` — style, documentation, or optional tooling; not a blocker.
+2. **Priority** — high, medium, or low, based on user impact and release risk.
+3. **Evidence** — file and line(s), command output, or a concise explanation of
    what is missing. Do not infer a defect from an absent convention alone.
-3. **Why it matters** — the concrete consequence for users, maintainers,
+4. **Why it matters** — the concrete consequence for users, maintainers,
    compatibility, or reproducibility.
-4. **Suggested change** — a specific implementation or workflow the maintainer
+5. **Suggested change** — a specific implementation or workflow the maintainer
    can review.
 
 Group related observations and avoid repeating a single root cause as several
@@ -95,6 +100,16 @@ findings. Separate confirmed issues from questions that need maintainer intent
 or additional runtime evidence. End with a short summary of strengths,
 highest-priority fixes, and the checks that were or were not run.
 
+If the user asks you to apply fixes, do a brief re-audit afterward. Fixes can
+enable checks that were previously hidden (for example, a missing test
+environment may have been masking a failing test), so re-run the relevant
+commands before giving a final go/no-go.
+
 Do not label optional preferences as violations. In particular, a package does
 not need every skill in this repository: assess applicability from its purpose,
 declared Julia support, and intended users.
+
+For release-readiness audits, end with a clear go/no-go statement that separates
+registry blockers from announcement polish. For example: "GO for registration
+once the two REGISTRY BLOCKER items are fixed; add a README before announcing
+publicly."
