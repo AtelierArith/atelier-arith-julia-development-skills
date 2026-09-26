@@ -118,8 +118,8 @@ This keeps `GaussianModel()` as the method-selection/configuration value and `Fi
 
 ### Type stability
 
-- On hot paths, avoid return types that vary unpredictably across inputs (type instability hurts specialization).
-- Confirm bottlenecks with profiling before micro-optimizing.
+- On hot paths, avoid return types that vary unpredictably across inputs; type instability prevents specialization and shows up as dynamic dispatch.
+- Diagnose and fix it with the tools in [[profiling-julia-performance]] (Profile, JET.jl, AllocCheck.jl) instead of guessing.
 
 ## Code formatting (JuliaFormatter)
 
@@ -137,7 +137,8 @@ Run formatting before merging substantive edits; wire the same command into CI o
 
 ## Performance and allocations
 
-- Measure with **`@benchmark` / `@btime`** from BenchmarkTools.jl rather than guessing.
+- Confirm bottlenecks by profiling before optimizing; see [[profiling-julia-performance]] for the full workflow (Profile, JET.jl, AllocCheck.jl).
+- For micro-benchmarks, use **`@benchmark` / `@btime`** from BenchmarkTools.jl rather than a single `@time`, which is dominated by variance and one-time effects.
 - Watch unnecessary array copies from slicing and broadcasting; when an in-place API is needed, expose it explicitly (separate function name or keyword argument) so callers opt in.
 
 ## Errors and documentation

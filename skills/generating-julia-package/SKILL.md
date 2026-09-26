@@ -90,3 +90,28 @@ $ tree
 
 3 directories, 2 files
 ```
+
+## Before registering the package
+
+Registration in the General registry is not automatic; get these in order first.
+
+- **Declare compatibility for every dependency.** Add a `[compat]` section to `Project.toml` with bounds for each dependency (and for `julia`). The registry's automatic merging expects compat entries for dependencies, and Aqua.jl can verify them:
+
+  ```toml
+  [compat]
+  julia = "1.10"
+  SomeDep = "1.2, 2"
+  ```
+
+- **Add quality checks to the test suite.** [Aqua.jl](https://github.com/JuliaTesting/Aqua.jl) runs automatable package checks — method ambiguities, undefined exports, unbound type parameters, stale dependencies, missing compat entries, and type piracy:
+
+  ```julia
+  using Aqua
+  Aqua.test_all(MyPkg)
+  ```
+
+  Add Aqua to the test environment (see [[creating-julia-test-env]] for the workspace or `[extras]`/`[targets]` setup) and pin a version, for example `[compat] Aqua = "0.8"`. Do **not** add Aqua to the package's own `[deps]` — it is a test-only dependency.
+
+- **Run the full test suite**, e.g. `julia --project -e 'using Pkg; Pkg.test()'`; see [[running-julia-test]] for targeted and parallel runs.
+
+- **Register** through [Registrator.jl](https://github.com/JuliaRegistries/Registrator.jl) — the `@JuliaRegistrator register` comment on a commit or pull request, or the Registrator app. This opens a PR against [General](https://github.com/JuliaRegistries/General); register only once the version, `[compat]` bounds, and tests are green.

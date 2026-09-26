@@ -36,15 +36,35 @@ end # module
 reverse = {}
 ```
 
-The empty table `{}` is to allow for giving metadata about the app.
+The empty table `{}` is to allow for giving metadata about the app. A package can define several apps, point an executable at a submodule, and set default Julia flags per app:
 
-After installing this app one could run:
-
+```toml
+[apps]
+main-app = {}
+cli-app = { submodule = "CLI" }
+fast-app = { julia_flags = ["--threads=auto", "--optimize=2"] }
 ```
-$ ~/.julia/bin/reverse some input string
+
+## Installing and running
+
+App support in Pkg is still experimental. Install the app with `Pkg.Apps.add` or `pkg> app add` (from a registry, a git URL, or a local path), or use `Pkg.Apps.develop` / `pkg> app develop` to run it live from a local checkout so edits are reflected immediately:
+
+```julia-repl
+pkg> app add MyReverseApp
+pkg> app add https://github.com/example/MyReverseApp.jl
+pkg> app develop path/to/MyReverseApp   # local path must be a git repository
+```
+
+Installing creates a shim in `~/.julia/bin`, which you must add to `PATH` yourself. After that, run the app by name:
+
+```sh
+$ reverse some input string
  emos tupni gnirts
 ```
 
-directly in the terminal. See the following link to learn more:
+Manage installed apps with `pkg> app status`, `pkg> app update [name]`, and `pkg> app rm name`. An app runs with the same Julia executable that installed it; override that for all apps with the `JULIA_APPS_JULIA_CMD` environment variable.
 
+Learn more:
+
+- [Apps](https://pkgdocs.julialang.org/v1/apps/)
 - [Multiple Apps per Package](https://pkgdocs.julialang.org/v1/apps/#Multiple-Apps-per-Package)

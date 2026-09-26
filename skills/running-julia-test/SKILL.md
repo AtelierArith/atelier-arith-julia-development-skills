@@ -1,6 +1,6 @@
 ---
 name: running-julia-test
-description: Use when you run tests
+description: Use when you run tests, including running a Julia package's test files in parallel with ParallelTestRunner.jl
 ---
 
 # Running Julia tests
@@ -63,84 +63,49 @@ $ testrunner --project=. test/runtests.jl L7:10
 
 Always confirm whether your filter worked as intended by checking the Total count in the `Test Summary` or the `n_passed` field in the `--json` output.
 
-## Keeping sessions warm with WarmTestRunner.jl
+## Running test files in parallel with ParallelTestRunner.jl
 
-WarmTestRunner.jl is a test runner that accelerates local test iterations while developing Julia packages.
+[ParallelTestRunner.jl](https://github.com/JuliaTesting/ParallelTestRunner.jl) runs each file in `test/` concurrently and in isolation, discovering them automatically. Reach for it when the suite is large and its files are independent, since wall-clock time then scales with the number of jobs instead of running serially.
 
-Whereas standard `Pkg.test()` runs your tests in a fresh Julia process every time, WarmTestRunner.jl reuses a daemon process and a pool of warm workers, spreading the loading and compilation cost across multiple test runs.
-
-As a general guideline, use it as follows:
-
-- For everyday edit/test cycles: `using WarmTestRunner; runtests()`
-- For final checks before merges, releases, or CI-style runs: `Pkg.test()`
-
-To install WarmTestRunner.jl:
+Add it to the test environment:
 
 ```sh
-$ julia -e 'using Pkg; Pkg.activate(); Pkg.develop(url="https://github.com/terasakisatoshi/WarmTestRunner.jl")'
+$ julia --project=test -e 'using Pkg; Pkg.add("ParallelTestRunner")'
 ```
 
-### Basic Usage
+Then set up autodiscovery:
+
+1. Remove the `include(...)` statements that manually assemble the suite — ParallelTestRunner discovers the files itself.
+2. Replace `test/runtests.jl` with a call to the runner:
+
+```julia
+using MyPkg
+using ParallelTestRunner
+
+runtests(MyPkg, ARGS)
+```
+
+Each `test/*.jl` file becomes its own isolated test, so files must be self-contained (load their own dependencies and define their own testsets).
+
+### Running
+
+Pass the runner's arguments through `Pkg.test` with `test_args`:
 
 ```sh
-$ cd path/to/target/package
-$ julia --project -e 'using WarmTestRunner; runtests()'
+# Use 4 worker processes
+$ julia --project -e 'using Pkg; Pkg.test(; test_args=["--jobs=4"])'
+
+# List the discovered tests
+$ julia --project -e 'using Pkg; Pkg.test(; test_args=["--list"])'
+
+# Run only tests whose names match the remaining arguments
+$ julia --project -e 'using Pkg; Pkg.test(; test_args=["foobar", "widgets"])'
 ```
 
-To run testsets in parallel, start the WarmTestRunner daemon with multiple jobs in one terminal, then run tests with `split_testsets = true` from another terminal:
+Useful options:
 
-```sh
-# Terminal 1
-$ cd path/to/target/package
-$ julia --project -e 'using WarmTestRunner; serve(jobs=4)'
-
-# Terminal 2
-$ cd path/to/target/package
-$ julia --project -e 'using WarmTestRunner; runtests(split_testsets = true)'
-```
-
-This splits testsets and executes them across the warm worker pool.
-
-When `runtests()` starts the daemon automatically, a daemon process runs in the background. To manually stop any WarmTestRunner daemon, run the following:
-
-```sh
-$ cd path/to/target/package
-$ julia --project -e 'using WarmTestRunner; stop()'
-```
-
-If you run `Pkg.build()` for the target package, stop the daemon (`stop()`) first and rerun `runtests()` afterwards.
-
-This is especially important when developing a Julia package with a C interface. In that workflow, `Pkg.build()` is often used to rebuild or replace a shared library, and WarmTestRunner workers may still have the old shared library loaded. Stop the daemon before rebuilding so the next test run starts from fresh workers:
-
-```sh
-$ cd path/to/target/package
-$ julia --project -e 'using WarmTestRunner; stop()'
-$ julia --project -e 'using Pkg; Pkg.build()'
-$ julia --project -e 'using WarmTestRunner; runtests()'
-# update files in ./src or ./test/
-$ julia --project -e 'using WarmTestRunner; runtests()'
-# update files in ./src or ./test/ ... repeat the cycle
-```
-
-### Caveat: When the workspace structure changes, run `stop()` first
-
-The daemon caches the path and contents of `Project.toml` into its worker pool at startup, so `runtests()` may fail to start with an error after any of the following **workspace structure changes**:
-
-- Deleting or regenerating `Project.toml` / `Manifest.toml`
-- Moving or renaming the package directory
-- Editing the `[workspace]` / `[deps]` / `[sources]` sections
-- Removing files the worker is still referencing from outside the daemon
-
-Example errors (recorded in the controller log `~/.julia/warmtestrunner/logs/controller-*.err.log`):
-
-```
-nested task error: ".../path/to/Project.toml": No such file
-ERROR: timed out waiting for server record for ...
-```
-
-The recovery procedure is the same as for `Pkg.build()`: **first `stop()`, then run `runtests()` again**:
-
-```sh
-$ julia --project -e 'using WarmTestRunner; stop()'
-$ julia --project -e 'using WarmTestRunner; runtests()'
-```
+- `--jobs=N` — number of worker processes; also settable with the `PTR_NUM_JOBS` environment variable (`--jobs` wins).
+- `--verbose` — print more detail while testing.
+- `--quickfail` — abort the whole run as soon as one test errors.
+- `--list` — list available tests alphabetically.
+- Positional arguments filter the tests to run.

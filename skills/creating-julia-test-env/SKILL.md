@@ -86,3 +86,38 @@ Step 5: Run the following to verify:
 ```sh
 $ julia --project -e 'using Pkg; Pkg.test()'
 ```
+
+## Optional: parallel test execution with ParallelTestRunner.jl
+
+The single-file setup above is fine to start. Once the suite grows into several
+independent test files under `test/`, [ParallelTestRunner.jl](https://github.com/JuliaTesting/ParallelTestRunner.jl)
+runs each file concurrently and in isolation, with autodiscovery. Add it to the
+test environment from inside `test/`:
+
+```sh
+$ cd test
+$ julia --project -e 'using Pkg; Pkg.add("ParallelTestRunner")'
+```
+
+Then turn `test/runtests.jl` into a dispatcher and **remove any `include(...)`
+calls** that manually assemble the suite — ParallelTestRunner discovers the
+files itself:
+
+```julia
+using MyPkg
+using ParallelTestRunner
+
+runtests(MyPkg, ARGS)
+```
+
+Each `test/*.jl` file becomes its own isolated test, so files must be
+self-contained: load their own dependencies and define their own testsets. Run
+it through `Pkg.test` with `test_args`:
+
+```sh
+$ julia --project -e 'using Pkg; Pkg.test(; test_args=["--jobs=4"])'
+$ julia --project -e 'using Pkg; Pkg.test(; test_args=["--list"])'
+```
+
+See [[running-julia-test]] for the full set of options (`--verbose`,
+`--quickfail`, name filtering, and `PTR_NUM_JOBS`).
