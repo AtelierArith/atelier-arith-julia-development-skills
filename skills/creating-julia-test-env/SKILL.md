@@ -3,7 +3,7 @@ name: creating-julia-test-env
 description: Use when you add tests for Julia packages
 ---
 
-# creating-julia-test-env
+# Creating a Julia test environment
 
 A minimal Julia package layout looks like this:
 
@@ -42,7 +42,10 @@ projects = ["test"]
 
 ---
 
-**Note:** If you are on Julia 1.11 or older, do **not** use `[workspace]`. Instead, add `[extras]` and `[targets]`:
+**Note:** If you are on Julia 1.11 or older, `[workspace]` is unavailable. You have two options:
+
+- **Keep `test/Project.toml` without `[workspace]`** (supported since Julia 1.2). Pkg merges the package and test projects automatically, so this is the closest to the workspace layout — just omit the `[workspace]` section and continue with Step 3 unchanged.
+- **Use the legacy `[extras]`/`[targets]` in the root `./Project.toml` instead of `test/Project.toml`.** When a `test/Project.toml` exists, `Pkg.test` ignores `[targets]`, so this option replaces Steps 1 and 3 rather than adding to them:
 
 ```toml
 [extras]

@@ -108,8 +108,10 @@ frames inside your own code. `report_package(MyPkg; target_modules=(MyPkg,))`
 analyzes a whole package, and `@report_call` finds potential runtime errors
 rather than performance issues.
 
-Two practical caveats:
+Three practical caveats:
 
+- JET loads and analyzes the target code, so it executes top-level statements
+  and `__init__`. Only analyze code you trust.
 - JET integrates tightly with the compiler and only offers full functionality
   on a limited set of Julia versions. Check `JET.JET_AVAILABLE` after loading;
   if it is `false`, JET is a no-op on that Julia version.

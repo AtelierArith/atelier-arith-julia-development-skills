@@ -1,6 +1,6 @@
 ---
 name: generating-julia-package
-description: Use when you create a JuliaLang package
+description: Use when you create a new Julia package or project environment — choosing the layout, writing `Project.toml`/`src`, generating a UUID, adding dependencies — or prepare a package for registration
 ---
 
 # Creating a Julia Package
@@ -110,7 +110,7 @@ Registration in the General registry is not automatic; get these in order first.
   Aqua.test_all(MyPkg)
   ```
 
-  Add Aqua to the test environment (see [[creating-julia-test-env]] for the workspace or `[extras]`/`[targets]` setup) and pin a version, for example `[compat] Aqua = "0.8"`. Do **not** add Aqua to the package's own `[deps]` — it is a test-only dependency.
+  Add Aqua to the test environment (see [[creating-julia-test-env]] for the test-environment setup) and pin a version, for example `[compat] Aqua = "0.8"`. Do **not** add Aqua to the package's own `[deps]` — it is a test-only dependency.
 
 - **Run the full test suite**, e.g. `julia --project -e 'using Pkg; Pkg.test()'`; see [[running-julia-test]] for targeted and parallel runs.
 

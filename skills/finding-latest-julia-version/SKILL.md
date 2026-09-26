@@ -46,6 +46,28 @@ curl -fsSL https://julialang-s3.julialang.org/bin/versions.json \
            | last'
 ```
 
+## Downloading and verifying a build
+
+Each entry also carries per-platform tarball URLs and SHA-256 hashes, so script
+the download instead of constructing URLs by hand. Pick the URL and hash for the
+current platform (replace the triplet as needed):
+
+```sh
+VERSION=1.12.6
+TRIPLET=aarch64-apple-darwin
+
+curl -fsSL https://julialang-s3.julialang.org/bin/versions.json \
+  | jq -r --arg v "$VERSION" --arg p "$TRIPLET" \
+      '.[$v].files[] | select(.triplet == $p) | .url, .sha256'
+```
+
+Then verify the archive against the hash before extracting:
+
+```sh
+shasum -a 256 -c <<<"<sha256>  julia.tar.gz"   # macOS
+sha256sum -c <<<"<sha256>  julia.tar.gz"        # Linux
+```
+
 ## Fallback: GitHub Releases API
 
 Use when the S3 endpoint is blocked but `api.github.com` is reachable. Note

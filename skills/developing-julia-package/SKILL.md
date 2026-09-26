@@ -1,6 +1,6 @@
 ---
 name: developing-julia-package
-description: Use when you write a Julia package
+description: Use when you implement or edit code inside an existing Julia package: module/`include` layout, multiple dispatch, type annotations and stability, formatting, and docstrings
 ---
 
 # Developing a Julia package
@@ -28,6 +28,9 @@ Split files to improve readability, not to recreate Python-style class or submod
 Guidelines below.
 
 ## Avoid excessive `export`s
+
+To audit and clean up an existing package's exports (for example, helpers
+exported only so `Pkg.test` can reach them), see [[fixing-julia-exports]].
 
 - Do not `export` helpers that are only used internally just so tests can reach them. Prefer importing explicitly in tests:
 

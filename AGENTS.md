@@ -73,11 +73,11 @@ When writing or updating skills that involve Julia, follow the patterns already 
 - Generate a UUID with: `julia -E 'using UUIDs; string(uuid4())'`
 
 **Test environment**
-- Use the `[workspace]` section in the root `Project.toml` (Julia 1.12+). For Julia 1.11 and older, use `[extras]` + `[targets]` instead.
+- Use the `[workspace]` section in the root `Project.toml` (Julia 1.12+). On Julia 1.11 and older, either keep `test/Project.toml` without `[workspace]` (supported since Julia 1.2), or use the legacy `[extras]` + `[targets]` in the root `Project.toml` **instead of** `test/Project.toml`.
 - The `test/Project.toml` must `Pkg.develop(path="../")` to reference the parent package.
 
 **Running tests**
-- If the package has no test environment yet, follow `creating-julia-test-env` first (workspace or `[extras]`/`[targets]` plus `test/Project.toml`).
+- If the package has no test environment yet, follow `creating-julia-test-env` first.
 - Full suite: `julia -e 'using Pkg; Pkg.test()'` (use for CI / pre-merge)
 - Targeted test sets: `testrunner --project=. test/runtests.jl L<start>:<end>` — use line ranges targeting only `@test` lines (not the `@testset` declaration line) to avoid the pattern-matching caveat.
 - Parallel files: `julia -e 'using Pkg; Pkg.test(; test_args=["--jobs=4"])'` (ParallelTestRunner.jl; requires autodiscovery in `test/runtests.jl` and no `include` calls).

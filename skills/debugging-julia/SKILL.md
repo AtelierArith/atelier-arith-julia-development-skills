@@ -1,6 +1,6 @@
 ---
 name: debugging-julia
-description: Use when Julia code errors, throws an exception, produces wrong results, or crashes and you need to find the cause from the command line. Covers capturing and reading stack traces, locating the failing method with @which/@code_warntype/@code_typed, finding potential runtime errors with JET.jl, and narrowing to a minimal reproduction. Do not reach for interactive debuggers (Debugger.jl, Infiltrator.jl, Cthulhu.jl) — they need a human at a TTY.
+description: Use when Julia code errors, throws an exception, produces wrong results, or crashes and you need to find the cause from the command line: capturing and reading stack traces, locating the failing method with @which/@code_warntype/@code_typed, finding potential runtime errors with JET.jl, and narrowing to a minimal reproduction
 ---
 
 # Debugging Julia code from the CLI
@@ -91,11 +91,11 @@ using JET
 ```
 
 Pass representative values; JET infers from their types. `report_package(MyPkg)`
-covers a whole package. JET's full functionality only works on supported Julia
-versions — check `JET.JET_AVAILABLE` after loading, and run it from a temporary
-environment (`Pkg.activate(; temp=true)`) if dependency conflicts prevent a
-working install. For performance (as opposed to correctness) analysis, see
-[[profiling-julia-performance]].
+covers a whole package. JET analyzes by loading the target code, so it runs
+top-level statements and `__init__` — only analyze code you trust. For JET's
+version support and the temporary-environment install workaround, see
+[[profiling-julia-performance]], which also covers performance (as opposed to
+correctness) analysis.
 
 ## Step 5: Narrow with logging and assertions
 
@@ -118,7 +118,8 @@ assertions in committed code unless they are genuine invariants.
 
 - Cut the reproduction down: fewer arguments, smaller input, one code path.
 - If the failure is recent, `git bisect` between a known-good and known-bad
-  commit finds the introducing change.
+  commit finds the introducing change. Each step checks out and runs historical
+  code, so only bisect commits you trust.
 - Confirm the fix by re-running the exact minimal reproduction, and add a
   regression test (see [[creating-julia-test-env]]).
 

@@ -97,6 +97,10 @@ end
 end # module
 ```
 
+The workload is package code that runs automatically during precompilation
+(`Pkg.precompile()`, or when the package is installed or updated), so
+precompiling a package executes that code. Only precompile code you trust.
+
 Key properties that make this work:
 
 - `@setup_workload` wraps the whole block so it runs during precompilation and

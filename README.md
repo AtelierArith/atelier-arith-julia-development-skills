@@ -8,6 +8,8 @@ Plugin containing Julia development skills for **Claude Code**, **Codex**, and *
 - `installing-julia` — point the user to the official Julia installation instructions (does not run install scripts)
 - `generating-julia-package` — create Julia project environments and package layouts
 - `developing-julia-package` — write Julia packages idiomatically
+- `documenting-julia-package` — build and publish package docs with Documenter.jl (makedocs, doctests, GitHub Pages)
+- `fixing-julia-exports` — remove internal-only exports and trim a package's public API
 - `precompiling-julia-package` — reduce compile latency (TTFX ≥ 3 s, TTFL ≥ 1 s) with PrecompileTools.jl
 - `profiling-julia-performance` — diagnose runtime slowness, type instability, and allocations with Profile, JET.jl, and AllocCheck.jl
 - `debugging-julia` — find the cause of exceptions and wrong results non-interactively (stack traces, @code_typed, JET)
@@ -196,7 +198,11 @@ there, then commit the change.
     │   └── SKILL.md
     ├── developing-julia-package/
     │   └── SKILL.md
+    ├── documenting-julia-package/
+    │   └── SKILL.md
     ├── finding-latest-julia-version/
+    │   └── SKILL.md
+    ├── fixing-julia-exports/
     │   └── SKILL.md
     ├── generating-julia-package/
     │   └── SKILL.md

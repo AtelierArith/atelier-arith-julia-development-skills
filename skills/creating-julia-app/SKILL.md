@@ -64,6 +64,12 @@ $ reverse some input string
 
 Manage installed apps with `pkg> app status`, `pkg> app update [name]`, and `pkg> app rm name`. An app runs with the same Julia executable that installed it; override that for all apps with the `JULIA_APPS_JULIA_CMD` environment variable.
 
+Installing an app installs third-party code that will be executed when the app runs. Prefer a registry entry or an immutable tag/commit (`#v1.2.3`, or a commit SHA) over a mutable branch, and review the source before running an app you did not write.
+
+## MCP servers
+
+A Julia MCP server is an app that speaks JSON-RPC over stdio: it reads requests from stdin and writes responses to stdout. Use the same `@main` / `[apps]` structure so it can be installed and launched by name, and keep stdout reserved for protocol messages — send logs to stderr. See the [Model Context Protocol](https://modelcontextprotocol.io/) specification for the wire format.
+
 Learn more:
 
 - [Apps](https://pkgdocs.julialang.org/v1/apps/)

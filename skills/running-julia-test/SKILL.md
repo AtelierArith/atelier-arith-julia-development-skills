@@ -1,19 +1,21 @@
 ---
 name: running-julia-test
-description: Use when you run tests, including running a Julia package's test files in parallel with ParallelTestRunner.jl
+description: Use when you run tests, including running a specific testset or line range with TestRunner.jl (`testrunner`) and running a Julia package's test files in parallel with ParallelTestRunner.jl
 ---
 
 # Running Julia tests
 
 ## Running all tests with `Pkg.test()`
 
-Before running tests for a new package, make sure the test environment is already set up. If the package does not have tests yet, follow `creating-julia-test-env` first. Tests that use `using Test` must have `Test` available from the package or test project.
+Before running tests for a new package, make sure the test environment is already set up. If the package does not have tests yet, follow [[creating-julia-test-env]] first. Tests that use `using Test` must have `Test` available from the package or test project.
 
 To run all of your package's tests, use the following command:
 
 ```sh
 $ julia --project -e 'using Pkg; Pkg.test()'
 ```
+
+`Pkg.test()` runs the package's test code in a fresh process, which executes arbitrary code; only run tests you trust.
 
 ## Running specific test sets only
 
@@ -28,8 +30,12 @@ $ command -v testrunner
 If you do not have the `testrunner` command, install it with:
 
 ```sh
-$ julia -e 'using Pkg; Pkg.activate(); Pkg.Apps.add(url="https://github.com/aviatesk/TestRunner.jl")'
+$ julia -e 'using Pkg; Pkg.activate(); Pkg.Apps.add(url="https://github.com/aviatesk/TestRunner.jl#release")'
 ```
+
+Install from the `release` branch: it vendors TestRunner's dependencies with rewritten UUIDs so the app does not conflict with the packages in your project. TestRunner requires Julia 1.12 or newer, and the executable lands in `~/.julia/bin`, which must be on your `PATH`.
+
+`#release` is a moving ref, so the installed code can change without notice. For a reproducible install, pin an immutable commit instead: `rev="<commit-sha>"`. `testrunner` is a third-party app that executes your test code, so install and run it only on code you trust.
 
 ### Basic Usage
 
