@@ -8,6 +8,7 @@ This repository contains skill documentation for Claude Code, Codex, and OpenCod
 - `skills/installing-julia/SKILL.md`
 - `skills/generating-julia-package/SKILL.md`
 - `skills/developing-julia-package/SKILL.md`
+- `skills/developing-julia-rust-bindings/SKILL.md`
 - `skills/documenting-julia-package/SKILL.md`
 - `skills/fixing-julia-exports/SKILL.md`
 - `skills/precompiling-julia-package/SKILL.md`
