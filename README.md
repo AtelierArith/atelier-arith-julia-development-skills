@@ -8,6 +8,7 @@ Plugin containing Julia development skills for **Claude Code**, **Codex**, and *
 - `installing-julia` — point the user to the official Julia installation instructions (does not run install scripts)
 - `generating-julia-package` — create Julia project environments and package layouts
 - `developing-julia-package` — write Julia packages idiomatically
+- `developing-julia-rust-bindings` — implement Julia interfaces to Rust libraries and reproduce native failures
 - `auditing-julia-package-practices` — review a package against these practices and suggest prioritized fixes
 - `documenting-julia-package` — build and publish package docs with Documenter.jl (makedocs, doctests, GitHub Pages)
 - `fixing-julia-exports` — remove internal-only exports and trim a package's public API
@@ -199,6 +200,13 @@ there, then commit the change.
     │   └── SKILL.md
     ├── developing-julia-package/
     │   └── SKILL.md
+    ├── developing-julia-rust-bindings/
+    │   ├── SKILL.md
+    │   ├── agents/
+    │   │   └── openai.yaml
+    │   └── references/
+    │       ├── colmat.md
+    │       └── upstream-reports.md
     ├── documenting-julia-package/
     │   └── SKILL.md
     ├── finding-latest-julia-version/

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Julia–Rust bindings"
+  short_description: "Develop Julia bindings to Rust libraries"
+  default_prompt: "Use $developing-julia-rust-bindings to implement and verify Julia wrappers for a Rust library, isolating upstream failures with runnable reproductions."
